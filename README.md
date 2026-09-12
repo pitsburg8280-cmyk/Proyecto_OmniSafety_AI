@@ -330,6 +330,7 @@ Proyecto_OmniSafety_AI/
 │   └── README.md                # Guía de las herramientas
 ├── docker-compose.yml           # Orquestación de servicios
 ├── requirements.txt             # Dependencias con versiones fijadas
+├── LICENSE                      # Licencia MIT del proyecto
 └── README.md                    # Este archivo
 ```
 
@@ -337,34 +338,36 @@ Proyecto_OmniSafety_AI/
 
 ## 📄 Documentación
 
-### Entregables disponibles
+### Entregable disponible
+
+El único entregable del proyecto es el documento académico en PDF.
 
 | Archivo | Contenido |
 | --- | --- |
 | `docs/entregables/OmniSafety_AI_Documento_APA.pdf` | Documento académico APA 7.ª edición, listo para entrega |
-| `docs/figuras/` | Once ilustraciones generadas a 150 ppp |
-| `docs/respaldos/` | Versiones anteriores conservadas como referencia |
 
-### Regenerar el documento académico
+Los directorios `docs/figuras/` (once ilustraciones a 150 ppp) y
+`docs/respaldos/` (versiones anteriores) contienen material de apoyo que no
+forma parte del entregable.
+
+### Regenerar las ilustraciones
 
 Las herramientas de `tools/` resuelven las rutas mediante `src/paths.py`, por lo
 que pueden ejecutarse desde la raíz del proyecto o desde su propia carpeta.
 
 ```bash
-# Generar las ilustraciones del documento
+# Generar las once ilustraciones del documento
 python tools/generate_figures.py
-
-# Construir el archivo DOCX a partir del texto fuente
-python tools/build_docx.py
 ```
 
-El documento incluye 24 tablas, 11 ilustraciones, referencias en formato APA 7.ª edición y cuatro apéndices orientados a la reproducibilidad.
+El documento final contiene 24 tablas, 11 ilustraciones, referencias en formato APA 7.ª edición y cuatro apéndices orientados a la reproducibilidad.
 
-> **Requisito para regenerar el DOCX:** `tools/build_docx.py` lee el archivo
-> fuente `docs/entregables/OmniSafety_AI_Documento_APA.txt`. Ese archivo no se
-> distribuye en el repositorio; solicítalo al equipo o recupéralo desde
-> `docs/respaldos/` antes de ejecutar la herramienta. Si no existe, el script
-> termina con un mensaje de error y no genera nada.
+> **Herramienta opcional para edición:** `tools/build_docx.py` construye una
+> versión editable en Word a partir del archivo fuente
+> `docs/entregables/OmniSafety_AI_Documento_APA.txt`. Esa herramienta y su
+> archivo fuente **no forman parte del entregable** ni se distribuyen en el
+> repositorio; el `.txt` se conserva únicamente en `docs/respaldos/`. Si el
+> archivo fuente no existe, el script termina con un mensaje de error.
 
 ---
 
@@ -474,7 +477,5 @@ Proyecto Final Integrador, 2026
 
 ## 📜 Licencia
 
-Distribuido bajo la licencia MIT. El archivo `LICENSE` todavía no está incluido
-en el repositorio; el texto de la licencia se añadirá en una versión posterior.
-Mientras tanto, considera el contenido publicado bajo los términos de la
-licencia MIT.
+Distribuido bajo la licencia MIT. Consulta el archivo [`LICENSE`](LICENSE) para
+más detalles.

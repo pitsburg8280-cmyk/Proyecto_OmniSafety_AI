@@ -1,23 +1,32 @@
 # Herramientas de documentación
 
-Scripts auxiliares para generar las ilustraciones y construir el documento académico. No forman parte del sistema en producción.
+Scripts auxiliares para generar las ilustraciones y construir el documento académico. No forman parte del sistema en producción ni del entregable final, que es el PDF.
 
 | Script | Función | Salida |
 | --- | --- | --- |
 | `generate_figures.py` | Genera las once ilustraciones del documento | `docs/figuras/*.png` |
-| `build_docx.py` | Construye el documento DOCX a partir del texto fuente | `docs/entregables/OmniSafety_AI_Documento_APA.docx` |
+| `build_docx.py` | Construye una versión editable en Word a partir del texto fuente | `docs/entregables/OmniSafety_AI_Documento_APA.docx` |
+| `smoke_test_live.py` | Comprobación funcional del flujo real contra la API en vivo | Reporte en consola |
 
 ## Ejecución
 
-Ambos scripts resuelven las rutas a través de `src/paths.py`, por lo que pueden ejecutarse desde la raíz del proyecto o desde esta carpeta.
+Todos los scripts resuelven las rutas a través de `src/paths.py`, por lo que pueden ejecutarse desde la raíz del proyecto o desde esta carpeta.
 
 ```bash
 # Regenerar las ilustraciones
 python tools/generate_figures.py
 
-# Regenerar el documento DOCX
+# Regenerar la versión editable en Word (requiere el .txt fuente)
 python tools/build_docx.py
+
+# Verificar el flujo real (requiere la API activa en el puerto 8000)
+python tools/smoke_test_live.py
 ```
+
+> `build_docx.py` requiere el archivo fuente
+> `docs/entregables/OmniSafety_AI_Documento_APA.txt`. Ese archivo no se
+> distribuye en el repositorio; se conserva en `docs/respaldos/`. Si no existe,
+> el script termina con un mensaje de error y no genera nada.
 
 ## Marcadores del archivo fuente
 
