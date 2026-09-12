@@ -25,6 +25,7 @@ OmniSafety AI integra visión por computadora, análisis de series temporales, p
 - [Aceleración por GPU](#-aceleración-por-gpu)
 - [Estructura del proyecto](#-estructura-del-proyecto)
 - [Documentación](#-documentación)
+- [Pruebas](#-pruebas)
 - [Solución de problemas](#-solución-de-problemas)
 - [Estado de verificación](#-estado-de-verificación)
 - [Tecnologías](#-tecnologías)
@@ -134,17 +135,24 @@ flowchart TB
 
 ```bash
 # Clonar el repositorio
-git clone <url-del-repositorio>
+git clone https://github.com/pitsburg8280-cmyk/Proyecto_OmniSafety_AI.git
 cd Proyecto_OmniSafety_AI
 
 # Crear y activar el entorno virtual
-python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # Linux y macOS
+python -m venv .venv
+.venv\Scripts\activate         # Windows
+# source .venv/bin/activate    # Linux y macOS
 
 # Instalar dependencias
 pip install -r requirements.txt
+
+# Dependencias de las pruebas (opcionales)
+pip install pytest pytest-cov
 ```
+
+> **Nota:** confirma que el intérprete activo tiene las dependencias antes de
+> arrancar los servicios con `python -c "import fastapi, uvicorn, streamlit"`.
+> El directorio del entorno virtual está excluido del control de versiones.
 
 ### Opción B: Docker
 
@@ -163,7 +171,7 @@ Inicia los dos servicios en terminales independientes.
 uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 
 # Terminal 2: Dashboard
-streamlit run src/dashboard/app.py
+streamlit run src/dashboard/app.py --server.port 8501
 ```
 
 | Servicio | URL |
@@ -172,6 +180,10 @@ streamlit run src/dashboard/app.py
 | Documentación interactiva | http://localhost:8000/docs |
 | Verificación de estado | http://localhost:8000/health |
 | Dashboard | http://localhost:8501 |
+
+> **Nota:** si el puerto 8501 ya está ocupado por otra aplicación, arranca el
+> tablero con `--server.port 8502`. El puerto también se declara en
+> `config/config.yaml` y en `docker-compose.yml`.
 
 ### Verificación rápida
 
@@ -288,29 +300,36 @@ services:
 
 ```text
 Proyecto_OmniSafety_AI/
-├── config/                      # Configuración global del sistema
+├── config/
+│   └── config.yaml              # Configuración global del sistema
 ├── data/
 │   ├── raw/                     # Datos originales
 │   ├── processed/               # Datos preprocesados
 │   └── models/                  # Modelos entrenados y optimizados
+├── docker/
+│   └── Dockerfile               # Imagen del ecosistema
 ├── docs/
-│   ├── figuras/                 # Ilustraciones del documento
-│   └── documento_apa.pdf        # Documento académico APA 7.ª edición
-├── scripts/
-│   ├── generate_figures.py      # Generación de las ilustraciones
-│   └── build_docx.py            # Construcción del documento DOCX
+│   ├── entregables/             # Documento académico APA 7.ª edición (PDF)
+│   ├── figuras/                 # Once ilustraciones del documento
+│   ├── respaldos/               # Versiones anteriores conservadas
+│   └── README.md                # Guía de la documentación
 ├── src/
 │   ├── api/main.py              # API REST en FastAPI
 │   ├── dashboard/app.py         # Dashboard en Streamlit
-│   ├── nlp/                     # Pipeline RAG
-│   ├── timeseries/              # Mantenimiento predictivo
-│   └── vision/                  # Detección de defectos y EPP
-├── tests/                       # Pruebas automatizadas
+│   ├── nlp/retrieval.py         # Pipeline RAG
+│   ├── timeseries/features.py   # Mantenimiento predictivo
+│   ├── vision/utils.py          # Detección de defectos y EPP
+│   ├── config.py                # Carga y escritura de la configuración
+│   ├── paths.py                 # Rutas centralizadas del proyecto
+│   └── README.md                # Guía del código fuente
+├── tests/                       # Pruebas automatizadas (41 pruebas)
+├── tools/
+│   ├── generate_figures.py      # Generación de las ilustraciones
+│   ├── build_docx.py            # Construcción del documento DOCX
+│   ├── smoke_test_live.py       # Comprobación funcional contra la API en vivo
+│   └── README.md                # Guía de las herramientas
 ├── docker-compose.yml           # Orquestación de servicios
-├── Dockerfile                   # Imagen del ecosistema
 ├── requirements.txt             # Dependencias con versiones fijadas
-├── Proyecto_OmniSafety_AI.txt   # Documento académico en texto
-├── Proyecto_OmniSafety_AI.docx  # Documento académico en Word
 └── README.md                    # Este archivo
 ```
 
@@ -318,17 +337,76 @@ Proyecto_OmniSafety_AI/
 
 ## 📄 Documentación
 
+### Entregables disponibles
+
+| Archivo | Contenido |
+| --- | --- |
+| `docs/entregables/OmniSafety_AI_Documento_APA.pdf` | Documento académico APA 7.ª edición, listo para entrega |
+| `docs/figuras/` | Once ilustraciones generadas a 150 ppp |
+| `docs/respaldos/` | Versiones anteriores conservadas como referencia |
+
 ### Regenerar el documento académico
+
+Las herramientas de `tools/` resuelven las rutas mediante `src/paths.py`, por lo
+que pueden ejecutarse desde la raíz del proyecto o desde su propia carpeta.
 
 ```bash
 # Generar las ilustraciones del documento
-python scripts/generate_figures.py
+python tools/generate_figures.py
 
 # Construir el archivo DOCX a partir del texto fuente
-python scripts/build_docx.py
+python tools/build_docx.py
 ```
 
 El documento incluye 24 tablas, 11 ilustraciones, referencias en formato APA 7.ª edición y cuatro apéndices orientados a la reproducibilidad.
+
+> **Requisito para regenerar el DOCX:** `tools/build_docx.py` lee el archivo
+> fuente `docs/entregables/OmniSafety_AI_Documento_APA.txt`. Ese archivo no se
+> distribuye en el repositorio; solicítalo al equipo o recupéralo desde
+> `docs/respaldos/` antes de ejecutar la herramienta. Si no existe, el script
+> termina con un mensaje de error y no genera nada.
+
+---
+
+## 🧪 Pruebas
+
+La suite cubre la API, la visión, las series temporales, el procesamiento de
+lenguaje natural y la configuración.
+
+```bash
+# Ejecutar todas las pruebas
+pytest -v
+
+# Un archivo específico
+pytest tests/test_vision.py -v
+
+# Con medición de cobertura
+pytest --cov=src --cov-report=term-missing
+```
+
+| Archivo | Pruebas | Cobertura |
+| --- | --- | --- |
+| `tests/test_api.py` | 6 | Endpoints, validación de entrada y formato de respuestas |
+| `tests/test_vision.py` | 7 | Normalización, filtrado, supresión no máxima y resumen |
+| `tests/test_timeseries.py` | 9 | Estadísticas de ventana, entropía y combinación del ensemble |
+| `tests/test_nlp.py` | 11 | Fragmentación, similitud coseno, BM25 y recuperación |
+| `tests/test_config.py` | 8 | Rutas centralizadas y carga y escritura de la configuración |
+
+### Comprobación funcional en vivo
+
+Además de las pruebas unitarias, `tools/smoke_test_live.py` verifica el flujo
+completo contra la API en ejecución: valida los cuatro endpoints con datos
+reales, comprueba la coherencia de las respuestas y confirma los códigos `422`
+de validación.
+
+```bash
+# Con la API en marcha en el puerto 8000
+python tools/smoke_test_live.py
+```
+
+El script devuelve el código de salida `0` si todas las comprobaciones pasan y
+`1` si alguna falla, por lo que puede integrarse en un flujo de integración
+continua.
 
 ---
 
@@ -341,19 +419,29 @@ El documento incluye 24 tablas, 11 ilustraciones, referencias en formato APA 7.�
 | `torch.cuda.is_available()` devuelve `False` | No hay GPU NVIDIA compatible o falta el controlador | Instala el controlador y una compilación de PyTorch con CUDA |
 | Puerto en uso | Otro proceso ocupa el puerto 8000 u 8501 | Cambia el puerto con `--port` o detén el proceso anterior |
 | El dashboard no carga datos | La API no está en ejecución | Inicia primero la API en el puerto 8000 |
+| `No module named uvicorn` o `No module named streamlit` | El intérprete activo no tiene las dependencias instaladas o se usó un entorno virtual distinto | Activa el entorno correcto e instala las dependencias con `pip install -r requirements.txt` |
+| `No module named pytest` | Las dependencias de prueba son opcionales y no se instalaron | `pip install pytest pytest-cov` |
+| `ERROR: no se encontró ...Documento_APA.txt` | Falta el archivo fuente del documento | Recupera el `.txt` desde `docs/respaldos/` o solicítalo al equipo |
 
 ---
 
 ## ✅ Estado de verificación
 
-Verificación realizada en un entorno local con Python 3.11.
+Verificación funcional realizada sobre el commit inicial en un entorno local con
+Python 3.11 en Windows, sin GPU disponible.
 
 | Elemento verificado | Resultado |
 | --- | --- |
 | Importación de FastAPI, Uvicorn y Streamlit | ✅ Correcta |
 | Arranque del servidor de API | ✅ Correcto en el puerto 8000 |
-| Endpoint `/health` | ✅ HTTP 200 con `{"status": "ok"}` |
-| Endpoint `/vision/defects/detect` | ✅ HTTP 200 con detecciones |
+| Endpoint `/health` | ✅ HTTP 200 con `{"status": "ok", "device": "cpu"}` |
+| Endpoint `/vision/defects/detect` | ✅ HTTP 200 con detecciones y `bbox` válidos |
+| Endpoint `/maintenance/predict` | ✅ HTTP 200; riesgo normalizado en `[0, 1]` |
+| Endpoint `/rag/query` | ✅ HTTP 200 con respuesta y fuentes |
+| Validación de entrada | ✅ HTTP 422 ante confianza inválida y `top_k` fuera de rango |
+| Comprobación funcional en vivo | ✅ 20 de 20 comprobaciones superadas |
+| Suite de pruebas automatizadas | ✅ 41 de 41 pruebas superadas |
+| Dashboard en Streamlit | ✅ Renderiza título, métricas, pestañas y gráficos |
 | Detección de CUDA | ℹ️ `cuda_available: false`; el sistema opera en CPU |
 | Docker y Docker Compose | ⚠️ No disponibles en el entorno verificado |
 
@@ -361,7 +449,7 @@ Verificación realizada en un entorno local con Python 3.11.
 
 ---
 
-## 🧪 Tecnologías
+## ⚙️ Tecnologías
 
 | Dominio | Herramientas |
 | --- | --- |
@@ -386,4 +474,7 @@ Proyecto Final Integrador, 2026
 
 ## 📜 Licencia
 
-Distribuido bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+Distribuido bajo la licencia MIT. El archivo `LICENSE` todavía no está incluido
+en el repositorio; el texto de la licencia se añadirá en una versión posterior.
+Mientras tanto, considera el contenido publicado bajo los términos de la
+licencia MIT.
