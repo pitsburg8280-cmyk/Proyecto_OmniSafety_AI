@@ -1,0 +1,60 @@
+# ============================================================
+# OmniSafety AI - Archivos excluidos del control de versiones
+# ============================================================
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+
+# Cachés de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Herramientas de pruebas y cobertura
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Cuadernos de Jupyter
+.ipynb_checkpoints/
+
+# Datos y modelos (no versionar artefactos pesados)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/models/*
+!data/models/.gitkeep
+
+# Entregables generados
+docs/entregables/*.docx
+docs/figuras/*.png
+
+# Variables de entorno y secretos
+.env
+.env.*
+*.pem
+*.key
+
+# Configuración de editores y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Registros y temporales
+*.log
+tmp/
+temp/

@@ -1,0 +1,35 @@
+# ============================================================
+# OmniSafety AI - Archivos excluidos del contexto de Docker
+# ============================================================
+
+# Control de versiones y documentación
+.git/
+.gitignore
+docs/
+README.md
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Cachés y artefactos de Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Datos y modelos (se montan como volúmenes)
+data/
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Registros y temporales
+*.log
+tmp/
+temp/

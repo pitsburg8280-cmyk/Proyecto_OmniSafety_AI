@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  omnisafety-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    environment:
+      - PYTHONPATH=/app
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
+
+  omnisafety-dashboard:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - omnisafety-api
+    command: streamlit run src/dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    restart: unless-stopped

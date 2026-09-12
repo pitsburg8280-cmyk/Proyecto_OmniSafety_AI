@@ -1,0 +1,66 @@
+# ============================================================
+# OmniSafety AI - Configuración global del sistema
+# ============================================================
+# Los valores definidos aquí sobreescriben los predeterminados de
+# src/config.py. Para cargar esta configuración:
+#
+#     from src import config
+#     ajustes = config.cargar_configuracion()
+# ============================================================
+
+sistema:
+  nombre: OmniSafety AI
+  version: 1.0.0
+  # auto: usa cuda si está disponible; también admite cpu o cuda
+  dispositivo: auto
+
+vision:
+  modelo: yolo11l.pt
+  resolucion: 640
+  confianza_minima: 0.5
+  umbral_iou: 0.5
+  clases:
+    - grieta
+    - abolladura
+    - rayadura
+    - corrosion
+    - mancha
+    - poro
+
+series_temporales:
+  ventana: 256
+  peso_xgboost: 0.6
+  peso_lstm: 0.4
+  umbral_alerta: 0.6
+  variables:
+    - vibracion_eje_x
+    - vibracion_eje_y
+    - vibracion_eje_z
+    - temperatura_motor
+    - temperatura_rodamiento
+    - presion_hidraulica
+    - corriente_motor
+    - rpm
+
+rag:
+  modelo_embeddings: sentence-transformers/all-MiniLM-L6-v2
+  dimensiones: 384
+  tamano_fragmento: 512
+  solapamiento: 50
+  top_k: 5
+  fusion: rango_reciproco
+
+api:
+  host: 0.0.0.0
+  puerto: 8000
+
+dashboard:
+  puerto: 8501
+  intervalo_actualizacion: 5
+
+rutas:
+  datos_crudos: data/raw
+  datos_procesados: data/processed
+  modelos: data/models
+  figuras: docs/figuras
+  entregables: docs/entregables
